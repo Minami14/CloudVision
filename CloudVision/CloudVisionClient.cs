@@ -32,18 +32,18 @@ namespace Minami
                 return JObject.Parse(webClient.UploadString(new Uri(uri), json));
             }
 
-            public TextAnnotation[] DetectText(string[] path)
+            public TextAnnotation[] DetectText(params string[] path)
             {
-                var type = new string[][] { new string[] { "TEXT_DETECTION" } };
+                var type = Enumerable.Repeat(new string[] { "TEXT_DETECTION" }, path.Length).ToArray();
                 var response = PostRequests(path, type);
                 return response["responses"].Select(s => s["textAnnotations"]?[0])
                                             .Select(s => new TextAnnotation(s?["description"].ToString(), s?["locale"].ToString()))
                                             .ToArray();
             }
 
-            public LabelAnnotation[] DetectLabels(string[] path)
+            public LabelAnnotation[] DetectLabels(params string[] path)
             {
-                var type = new string[][] { new string[] { "LABEL_DETECTION" } };
+                var type = Enumerable.Repeat(new string[] { "LABEL_DETECTION" }, path.Length).ToArray();
                 var response = PostRequests(path, type);
                 var responseLength = response["responses"].ToArray().Length;
                 string[][] descriptions = new string[responseLength][];
